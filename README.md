@@ -5,6 +5,7 @@
 ## What is this
 
 This is supposed to work with metrics [prometheus-carshare-exporter](https://github.com/ra100/prometheus-carshare-exporter)
+![](./sample.png)
 
 ## Build Setup
 

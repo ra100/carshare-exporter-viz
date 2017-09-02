@@ -6,7 +6,7 @@ const step = 360
 
 const client = axios.create(local.axiosConfig)
 
-const {metricsKeys} = local
+const {metricsKeys, filter} = local
 
 const callApi = (query) => {
   const now = Date.now() / 1000
@@ -14,7 +14,7 @@ const callApi = (query) => {
     method: 'GET',
     url: '/query_range',
     params: {
-      query: `${query}{id=~"11|14|16|17|19|20|21|22|23"}`,
+      query: `${query}${filter}`,
       start: now - timeframe,
       end: now,
       step,

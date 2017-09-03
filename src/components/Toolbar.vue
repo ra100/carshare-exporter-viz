@@ -70,8 +70,8 @@ export default {
 }
 </script>
 
-<style>
+<style @scoped>
 .at-dropdown-menu {
-  max-height: auto;
+  max-height: 100%;
 }
 </style>

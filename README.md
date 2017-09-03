@@ -30,9 +30,9 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 
 ## TODO
 
-- [ ] Add controls
-- [ ] Manual refresh
-- [ ] Select just one car
+- [x] Add controls
+- [x] Manual refresh
+- [x] Select just one car
 - [ ] Change time
 - [ ] Show more data
 

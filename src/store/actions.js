@@ -1,17 +1,24 @@
 import _ from 'lodash'
 import {getData} from './DataLoader'
 
-export const loadData = async (context) => {
-  const {cars, locations} = await getData()
-  context.commit('setCars', cars)
-  context.commit('setLocations', locations)
-  context.commit('clearMarkers')
-  context.dispatch('refreshLocationMarkers')
-  context.dispatch('refreshCarMarkers')
-  context.dispatch('refreshTrails')
+export const bindLayers = ({commit}) => {
+  commit('addGroupLayer', 'layerMarkers')
+  commit('addGroupLayer', 'layerLocations')
+  commit('addGroupLayer', 'layerTrails')
+}
+
+export const loadData = ({commit, dispatch}) => {
+  getData().then(({cars, locations}) => {
+    commit('setCars', cars)
+    commit('setLocations', locations)
+    dispatch('refreshLocationMarkers')
+    dispatch('refreshCarMarkers')
+    dispatch('refreshTrails')
+  })
 }
 
 export const refreshLocationMarkers = ({commit, state}) => {
+  commit('clearLocationMarkers')
   const {locations} = state
   let max = 0
   const newLocations = _.map(locations, (count, key) => {
@@ -28,10 +35,14 @@ export const refreshLocationMarkers = ({commit, state}) => {
 }
 
 export const refreshCarMarkers = ({commit, state}) => {
-  _.map(state.cars, car => {
+  commit('clearMarkers')
+  _.forEach(state.cars, car => {
+    if (!car.visible) {
+      return
+    }
     const value = car.values[car.values.length - 1]
     const position = [value.lat, value.lng]
-    commit('addMarker', {
+    return commit('addMarker', {
       marker: position,
       options: {
         opacity: (value.available === '1' && 1) || 0.5
@@ -43,5 +54,43 @@ export const refreshCarMarkers = ({commit, state}) => {
 }
 
 export const refreshTrails = ({commit, state}) => {
-  _.map(state.cars, car => car.visible && commit('addTrail', {car, trail: car.trail}))
+  commit('clearTrailMarkers')
+  _.forEach(state.cars, car => {
+    if (car.visible) {
+      commit('addTrail', {car, trail: car.trail})
+    }
+  })
+}
+
+export const toggleLayer = ({commit, state}, layerName) => {
+  if (state.visibleLayers.includes(layerName)) {
+    return commit('removeGroupLayer', layerName)
+  }
+  return commit('addGroupLayer', layerName)
+}
+
+export const toggleCar = ({commit, dispatch, state}, name) => {
+  if (state.cars[name].visible) {
+    commit('hideCar', name)
+  } else {
+    commit('showCar', name)
+  }
+  dispatch('refreshCarMarkers')
+  dispatch('refreshTrails')
+}
+
+export const hideAll = ({commit, dispatch, state}) => {
+  _.forEach(state.cars, car => {
+    commit('hideCar', car.metric.name)
+  })
+  dispatch('refreshCarMarkers')
+  dispatch('refreshTrails')
+}
+
+export const showAll = ({commit, dispatch, state}) => {
+  _.forEach(state.cars, car => {
+    commit('showCar', car.metric.name)
+  })
+  dispatch('refreshCarMarkers')
+  dispatch('refreshTrails')
 }

@@ -5,10 +5,13 @@ import VueLeaflet from 'vueleaflet'
 import App from './App'
 import router from './router'
 import store from './store'
+import AtComponents from 'at-ui'
+import 'at-ui-style'
 
 Vue.config.productionTip = false
 
 Vue.use(VueLeaflet.plugin, store)
+Vue.use(AtComponents)
 
 /* eslint-disable no-new */
 new Vue({

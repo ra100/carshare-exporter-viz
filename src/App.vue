@@ -6,10 +6,7 @@
 
 <script>
 export default {
-  name: 'app',
-  mounted () {
-    this.$store.dispatch('loadData')
-  }
+  name: 'app'
 }
 </script>
 

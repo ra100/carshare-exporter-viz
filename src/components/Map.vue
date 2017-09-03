@@ -2,7 +2,6 @@
 </template>
 
 <script>
-// import _ from 'lodash'
 import '../../node_modules/leaflet/dist/leaflet.css'
 import {fixIcon} from './MarkerIcon'
 
@@ -19,13 +18,13 @@ export default {
       opacity: 1,
       draggable: true,
       attributionControl: false,
-      attribution: 'vue-leaflet',
-      cars: {},
-      locations: []
+      attribution: 'vue-leaflet'
     }
   },
   mounted () {
     fixIcon()
+    this.$store.dispatch('bindLayers')
+    this.$store.dispatch('loadData')
   }
 }
 </script>

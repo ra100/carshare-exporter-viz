@@ -1,7 +1,7 @@
 import axios from 'axios'
 import _ from 'lodash'
 import local from '../../config/local'
-const timeframe = (7 * 24 * 60 * 60) // WEEK
+const timeframe = (14 * 24 * 60 * 60) // WEEK
 const step = 360
 
 const client = axios.create(local.axiosConfig)

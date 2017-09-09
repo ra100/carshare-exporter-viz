@@ -1,11 +1,14 @@
 import {sortBy} from 'lodash'
 
 const getTrail = (values) =>
-  values.reduce((acc, cur) => {
-    const prev = (acc.length > 0 && acc[acc.length - 1]) || []
-    if (cur.available !== '1' ||
-      (prev.lat === cur.lat &&
-      prev.lng === cur.lng)) {
+  values.reduce((acc, cur, index) => {
+    if (index === 0) {
+      return [[cur.lat, cur.lng]]
+    }
+    const prev = acc[acc.length - 1]
+    if (Number.parseInt(cur.available) !== 1 ||
+      (prev[0] === cur.lat &&
+      prev[1] === cur.lng)) {
       return acc
     }
     acc.push([cur.lat, cur.lng])

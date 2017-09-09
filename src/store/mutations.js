@@ -36,6 +36,10 @@ export const setCars = (state, cars) => {
   state.cars = {...cars}
 }
 
+export const addCar = (state, {car, key}) => {
+  state.cars[key] = car
+}
+
 export const setLocations = (state, locations) => {
   state.locations = {...locations}
 }

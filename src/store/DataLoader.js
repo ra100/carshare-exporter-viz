@@ -1,7 +1,7 @@
 import axios from 'axios'
 import CarsWorker from './workers/carsWorker.js'
 import local from '../../config/local'
-const timeframe = (14 * 24 * 60 * 60) // WEEK
+const timeframe = (14 * 24 * 60 * 60) // 2 weeks
 const step = 300
 
 const client = axios.create(local.axiosConfig)
@@ -38,8 +38,7 @@ export const getData = () => {
         reject(new Error(error))
       }
       // https://stackoverflow.com/questions/42376464/uncaught-domexception-failed-to-execute-postmessage-on-window-an-object-co
-      const action = JSON.parse(JSON.stringify({action: 'processCars', results}))
-      worker.postMessage(action)
+      worker.postMessage({action: 'processCars', results: JSON.parse(JSON.stringify(results))})
     }))
     .catch(console.error)
 }

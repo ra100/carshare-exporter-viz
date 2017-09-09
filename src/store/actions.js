@@ -1,5 +1,8 @@
 import _ from 'lodash'
 import {getData} from './DataLoader'
+import LocationWorker from './workers/locationWorker.js'
+
+const locationWorker = new LocationWorker()
 
 export const bindLayers = ({commit}) => {
   commit('addGroupLayer', 'layerMarkers')
@@ -19,19 +22,18 @@ export const loadData = ({commit, dispatch}) => {
 
 export const refreshLocationMarkers = ({commit, state}) => {
   commit('clearLocationMarkers')
-  const {locations} = state
-  let max = 0
-  const newLocations = _.map(locations, (count, key) => {
-    const [lat, lng] = key.split(',')
-    max = count > max ? count : max
-    return { lat, lng, count }
-  })
-  newLocations.forEach(location => {
-    commit('addLocationsMarker', {
-      marker: [location.lat, location.lng],
-      radius: Math.max(location.count > 0 ? (location.count / max) * 24 : 6, 6)
+  locationWorker.onmessage = ({data: {newLocations, max}}) => {
+    newLocations.forEach(location => {
+      commit('addLocationsMarker', {
+        marker: [location.lat, location.lng],
+        radius: Math.max(location.count > 0 ? (location.count / max) * 24 : 6, 6)
+      })
     })
-  })
+  }
+  locationWorker.onerror = (error) => {
+    console.error(new Error(error))
+  }
+  locationWorker.postMessage({action: 'locations', locations: state.locations})
 }
 
 export const refreshCarMarkers = ({commit, state}) => {

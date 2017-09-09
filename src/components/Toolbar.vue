@@ -62,9 +62,9 @@ export default {
     },
     handleCar (name) {
       if (['hideAll', 'showAll'].includes(name)) {
-        this[name]()
+        return this[name]()
       }
-      this.toggleCar(name)
+      return this.toggleCar(name)
     }
   }
 }

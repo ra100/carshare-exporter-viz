@@ -32,12 +32,16 @@ export const addTrail = (state, {car, trail}) => {
   state.layerTrails.addLayer(lTrail)
 }
 
+export const clearTrails = (state) => {
+  state.trails = []
+}
+
 export const setCars = (state, cars) => {
   state.cars = {...cars}
 }
 
 export const addCar = (state, {car, key}) => {
-  state.cars[key] = car
+  state.cars[key] = {...car}
 }
 
 export const setLocations = (state, locations) => {
@@ -56,10 +60,10 @@ export const clearTrailMarkers = (state) => {
   state.layerTrails.clearLayers()
 }
 
-export const showCar = (state, id) => {
-  state.cars[id].visible = true
+export const showCar = (state, name) => {
+  state.cars[name].visible = true
 }
 
-export const hideCar = (state, id) => {
-  state.cars[id].visible = false
+export const hideCar = (state, name) => {
+  state.cars[name].visible = false
 }

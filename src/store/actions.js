@@ -60,6 +60,7 @@ export const refreshCarMarkers = ({commit, state}) => {
 
 export const refreshTrails = ({commit, state}) => {
   commit('clearTrailMarkers')
+  commit('clearTrails')
   _.forEach(state.cars, car => {
     if (car.visible) {
       commit('addTrail', {car, trail: car.trail})

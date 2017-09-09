@@ -40,13 +40,23 @@ import _ from 'lodash'
 import {mapActions, mapState} from 'vuex'
 export default {
   name: 'toolbar',
+  data: () => {
+    return {
+      carsArray: []
+    }
+  },
   computed: {
     ...mapState([
       'visibleLayers',
       'cars'
-    ]),
-    carsArray: function () {
-      return _.values(this.cars)
+    ])
+    // carsArray: function () {
+    //   return _.values(this.cars)
+    // }
+  },
+  watch: {
+    cars: function (cars) {
+      this.carsArray = _.values(cars)
     }
   },
   methods: {

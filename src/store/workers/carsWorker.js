@@ -1,4 +1,4 @@
-import {sortBy} from 'lodash'
+import sortBy from 'lodash.sortby'
 
 const getTrail = (values) =>
   values.reduce((acc, cur, index) => {

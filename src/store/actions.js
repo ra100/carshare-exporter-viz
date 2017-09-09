@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import forEach from 'lodash.foreach'
 import {getData} from './DataLoader'
 import LocationWorker from './workers/locationWorker.js'
 
@@ -41,7 +41,7 @@ export const refreshLocationMarkers = ({commit, state}) => {
 
 export const refreshCarMarkers = ({commit, state}) => {
   commit('clearMarkers')
-  _.forEach(state.cars, car => {
+  forEach(state.cars, car => {
     if (!car.visible) {
       return
     }
@@ -61,7 +61,7 @@ export const refreshCarMarkers = ({commit, state}) => {
 export const refreshTrails = ({commit, state}) => {
   commit('clearTrailMarkers')
   commit('clearTrails')
-  _.forEach(state.cars, car => {
+  forEach(state.cars, car => {
     if (car.visible) {
       commit('addTrail', {car, trail: car.trail})
     }
@@ -86,7 +86,7 @@ export const toggleCar = ({commit, dispatch, state}, name) => {
 }
 
 export const hideAll = ({commit, dispatch, state}) => {
-  _.forEach(state.cars, car => {
+  forEach(state.cars, car => {
     commit('hideCar', car.metric.name)
   })
   dispatch('refreshCarMarkers')
@@ -94,7 +94,7 @@ export const hideAll = ({commit, dispatch, state}) => {
 }
 
 export const showAll = ({commit, dispatch, state}) => {
-  _.forEach(state.cars, car => {
+  forEach(state.cars, car => {
     commit('showCar', car.metric.name)
   })
   dispatch('refreshCarMarkers')

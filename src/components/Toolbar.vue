@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import values from 'lodash.values'
 import {mapActions, mapState} from 'vuex'
 export default {
   name: 'toolbar',
@@ -50,13 +50,10 @@ export default {
       'visibleLayers',
       'cars'
     ])
-    // carsArray: function () {
-    //   return _.values(this.cars)
-    // }
   },
   watch: {
     cars: function (cars) {
-      this.carsArray = _.values(cars)
+      this.carsArray = values(cars)
     }
   },
   methods: {

@@ -1,11 +1,10 @@
 import axios from 'axios'
-import CarsWorker from './workers/carsWorker.js'
+import cars from './helper/cars.js'
 import local from '../../config/local'
 const timeframe = (30 * 24 * 60 * 60) // 30 days
 const step = 300
 
 const client = axios.create(local.axiosConfig)
-const worker = new CarsWorker()
 
 const {metricsKeys, filter} = local
 
@@ -33,16 +32,8 @@ export const getData = async ({from, to} = {}) => {
       callApi({query: metricsKeys.lng, start, end}),
       callApi({query: metricsKeys.available, start, end})
     ])
-    return new Promise((resolve, reject) => {
-      worker.onmessage = ({data}) => {
-        return resolve(data)
-      }
-      worker.onerror = (error) => {
-        reject(new Error(error))
-      }
-      // https://stackoverflow.com/questions/42376464/uncaught-domexception-failed-to-execute-postmessage-on-window-an-object-co
-      worker.postMessage({action: 'processCars', results: JSON.parse(JSON.stringify(results))})
-    })
+    const data = cars.processCars({results})
+    return Promise.resolve(data)
   } catch (error) {
     console.error(error)
   }

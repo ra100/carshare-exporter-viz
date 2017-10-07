@@ -1,7 +1,7 @@
 import axios from 'axios'
 import CarsWorker from './workers/carsWorker.js'
 import local from '../../config/local'
-const timeframe = (14 * 24 * 60 * 60) // 2 weeks
+const timeframe = (30 * 24 * 60 * 60) // 30 days
 const step = 300
 
 const client = axios.create(local.axiosConfig)
@@ -9,28 +9,31 @@ const worker = new CarsWorker()
 
 const {metricsKeys, filter} = local
 
-const callApi = (query) => {
-  const now = Date.now() / 1000
+const callApi = ({query, f = filter, start, end} = {}) => {
   return client({
     method: 'GET',
     url: '/query_range',
     params: {
-      query: `${query}${filter}`,
-      start: now - timeframe,
-      end: now,
+      query: `${query}${f}`,
+      start,
+      end,
       step,
       _: Date.now()
     }
   })
 }
 
-export const getData = () => {
-  return Promise.all([
-    callApi(metricsKeys.lat),
-    callApi(metricsKeys.lng),
-    callApi(metricsKeys.available)
-  ])
-    .then(results => new Promise((resolve, reject) => {
+export const getData = async ({from, to} = {}) => {
+  const now = Date.now() / 1000
+  const end = to || now
+  const start = from || now - timeframe
+  try {
+    const results = await Promise.all([
+      callApi({query: metricsKeys.lat, start, end}),
+      callApi({query: metricsKeys.lng, start, end}),
+      callApi({query: metricsKeys.available, start, end})
+    ])
+    return new Promise((resolve, reject) => {
       worker.onmessage = ({data}) => {
         return resolve(data)
       }
@@ -39,8 +42,10 @@ export const getData = () => {
       }
       // https://stackoverflow.com/questions/42376464/uncaught-domexception-failed-to-execute-postmessage-on-window-an-object-co
       worker.postMessage({action: 'processCars', results: JSON.parse(JSON.stringify(results))})
-    }))
-    .catch(console.error)
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export default {

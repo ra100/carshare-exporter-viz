@@ -1,5 +1,3 @@
-import sortBy from 'lodash.sortby'
-
 const getTrail = (values) =>
   values.reduce((acc, cur, index) => {
     if (index === 0) {
@@ -19,24 +17,36 @@ const processCars = ({results}) => {
   const cars = {}
   const locations = {}
   const [latResult, lngResult, availableResult] = results
-  const lat = sortBy(latResult.data.data.result, car => car.metric.id)
-  const lng = sortBy(lngResult.data.data.result, car => car.metric.id)
-  const available = sortBy(availableResult.data.data.result, car => car.metric.id)
-  lat.forEach((car, carIndex) => {
-    const latValues = car.values
+  const tmpCars = {}
+  latResult.data.data.result.forEach(car => {
+    tmpCars[car.metric.id] = {
+      lat: car.values,
+      lng: [],
+      available: [],
+      metric: car.metric
+    }
+  })
+  lngResult.data.data.result.forEach(car => {
+    tmpCars[car.metric.id].lng = car.values
+  })
+  availableResult.data.data.result.forEach(car => {
+    tmpCars[car.metric.id].available = car.values
+  })
+  Object.keys(tmpCars).forEach((carId) => {
+    const car = tmpCars[carId]
+    const latValues = car.lat
+    const lngValues = car.lng
+    const availableValues = car.available
     const newCar = {metric: car.metric, values: [], trail: [], visible: true}
-    latValues.forEach((oneLat, index) => {
-      const val = {
-        lat: oneLat[1],
-        lng: lng[carIndex].values[index][1],
-        available: available[carIndex].values[index][1]
-      }
-      newCar.values.push(val)
-    })
-    newCar.values.forEach(location => {
-      const key = `${location.lat},${location.lng}`
+    newCar.values = latValues.map((oneLat, index) => {
+      const key = `${oneLat[1]},${lngValues[index][1]}`
       ;(locations[key] = (!!locations[key] && locations[key]) || 0)
-      ;locations[key] += Number(location.available)
+      ;locations[key] += Number(availableValues[index][1])
+      return {
+        lat: oneLat[1],
+        lng: lngValues[index][1],
+        available: availableValues[index][1]
+      }
     })
     newCar.trail = getTrail(newCar.values)
     cars[car.metric.name] = newCar

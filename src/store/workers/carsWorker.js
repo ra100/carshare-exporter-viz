@@ -1,3 +1,25 @@
+import axios from 'axios'
+import local from '../../../config/local'
+const timeframe = (30 * 24 * 60 * 60) // 30 days
+const step = 300
+
+const client = axios.create(local.axiosConfig)
+const {metricsKeys, filter} = local
+
+const callApi = ({query, f = filter, start, end} = {}) => {
+  return client({
+    method: 'GET',
+    url: '/query_range',
+    params: {
+      query: `${query}${f}`,
+      start,
+      end,
+      step,
+      _: Date.now()
+    }
+  })
+}
+
 const getTrail = (values) =>
   values.reduce((acc, cur, index) => {
     if (index === 0) {
@@ -13,7 +35,7 @@ const getTrail = (values) =>
     return acc
   }, [])
 
-const processCars = ({results}) => {
+const processCars = (results) => {
   const cars = {}
   const locations = {}
   const [latResult, lngResult, availableResult] = results
@@ -38,27 +60,57 @@ const processCars = ({results}) => {
     const lngValues = car.lng
     const availableValues = car.available
     const newCar = {metric: car.metric, values: [], trail: [], visible: true}
-    newCar.values = latValues.map((oneLat, index) => {
-      const key = `${oneLat[1]},${lngValues[index][1]}`
-      ;(locations[key] = (!!locations[key] && locations[key]) || 0)
-      ;locations[key] += Number(availableValues[index][1])
-      return {
+    newCar.values = latValues.reduce((acc, oneLat, index) => {
+      const curr = {
         lat: oneLat[1],
         lng: lngValues[index][1],
         available: availableValues[index][1]
       }
-    })
+      if (index === 0) {
+        return [curr]
+      }
+      const prev = acc[acc.length - 1]
+      if (prev.lat === curr.lat && prev.lng === curr.lng && prev.available === curr.available) {
+        return acc
+      }
+      const key = `${oneLat[1]},${lngValues[index][1]}`
+      ;(locations[key] = (!!locations[key] && locations[key]) || 0)
+      ;locations[key] += Number(availableValues[index][1])
+      acc.push(curr)
+      return acc
+    }, [])
     newCar.trail = getTrail(newCar.values)
-    cars[car.metric.name] = newCar
+    cars[car.metric.name] = {
+      trail: Object.freeze(newCar.trail),
+      visible: newCar.visible,
+      metric: Object.freeze(newCar.metric),
+      values: Object.freeze(newCar.values)
+    }
   })
   return {cars, locations}
 }
 
+const fetchCars = async ({from, to} = {}) => {
+  const now = Date.now() / 1000
+  const end = to || now
+  const start = from || now - timeframe
+  try {
+    const results = await Promise.all([
+      callApi({query: metricsKeys.lat, start, end}),
+      callApi({query: metricsKeys.lng, start, end}),
+      callApi({query: metricsKeys.available, start, end})
+    ])
+    return Promise.resolve(processCars(results))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 self.addEventListener('message', (event) => {
   const {data: {action}} = event
-  if (!action || action !== 'processCars') {
+  if (!action || action !== 'fetchCars') {
     return
   }
-  const result = processCars(event.data)
-  self.postMessage(result)
+  fetchCars(event.data)
+    .then(self.postMessage, self.postMessage)
 })

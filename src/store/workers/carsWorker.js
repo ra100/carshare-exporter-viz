@@ -60,31 +60,23 @@ const processCars = (results) => {
     const lngValues = car.lng
     const availableValues = car.available
     const newCar = {metric: car.metric, values: [], trail: [], visible: true}
-    newCar.values = latValues.reduce((acc, oneLat, index) => {
+    newCar.values = latValues.map((acc, index) => {
       const curr = {
-        lat: oneLat[1],
+        lat: acc[1],
         lng: lngValues[index][1],
         available: availableValues[index][1]
       }
-      if (index === 0) {
-        return [curr]
-      }
-      const prev = acc[acc.length - 1]
-      if (prev.lat === curr.lat && prev.lng === curr.lng && prev.available === curr.available) {
-        return acc
-      }
-      const key = `${oneLat[1]},${lngValues[index][1]}`
+      const key = `${acc[1]},${lngValues[index][1]}`
       ;(locations[key] = (!!locations[key] && locations[key]) || 0)
       ;locations[key] += Number(availableValues[index][1])
-      acc.push(curr)
-      return acc
-    }, [])
+      return curr
+    })
     newCar.trail = getTrail(newCar.values)
     cars[car.metric.name] = {
-      trail: Object.freeze(newCar.trail),
+      trail: newCar.trail,
       visible: newCar.visible,
-      metric: Object.freeze(newCar.metric),
-      values: Object.freeze(newCar.values)
+      metric: newCar.metric,
+      values: newCar.values
     }
   })
   return {cars, locations}

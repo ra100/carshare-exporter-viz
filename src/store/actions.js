@@ -12,10 +12,16 @@ export const bindLayers = ({commit}) => {
 
 export const loadData = ({commit, dispatch}) => {
   getData().then(({cars, locations}) => {
-    commit('setCars', {})
+    const frozenCars = {}
     Object.keys(cars).forEach(key => {
-      commit('addCar', {key, car: cars[key]})
+      frozenCars[key] = {
+        ...cars[key],
+        metrics: Object.freeze(cars[key].metrics),
+        trail: Object.freeze(cars[key].trail),
+        values: Object.freeze(cars[key].values)
+      }
     })
+    commit('setCars', cars)
     commit('setLocations', locations)
     dispatch('refreshLocationMarkers')
     dispatch('refreshCarMarkers')

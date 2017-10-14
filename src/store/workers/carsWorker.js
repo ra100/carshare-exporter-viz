@@ -81,10 +81,10 @@ const processCars = (results) => {
     }, [])
     newCar.trail = getTrail(newCar.values)
     cars[car.metric.name] = {
-      trail: Object.freeze(newCar.trail),
+      trail: newCar.trail,
       visible: newCar.visible,
-      metric: Object.freeze(newCar.metric),
-      values: Object.freeze(newCar.values)
+      metric: newCar.metric,
+      values: newCar.values
     }
   })
   return {cars, locations}

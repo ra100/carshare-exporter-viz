@@ -27,4 +27,7 @@ html,
 body {
   height: 100vh;
 }
+.maptalks-msgContent {
+  color: #fff;
+}
 </style>

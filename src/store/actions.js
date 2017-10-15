@@ -5,9 +5,9 @@ import LocationWorker from './workers/locationWorker.js'
 const locationWorker = new LocationWorker()
 
 export const bindLayers = ({commit}) => {
-  commit('addGroupLayer', 'layerMarkers')
   commit('addGroupLayer', 'layerLocations')
   commit('addGroupLayer', 'layerTrails')
+  commit('addGroupLayer', 'layerMarkers')
 }
 
 export const loadData = ({commit, dispatch}) => {
@@ -24,8 +24,8 @@ export const loadData = ({commit, dispatch}) => {
     commit('setCars', cars)
     commit('setLocations', locations)
     dispatch('refreshLocationMarkers')
-    dispatch('refreshCarMarkers')
     dispatch('refreshTrails')
+    dispatch('refreshCarMarkers')
   })
 }
 
@@ -52,7 +52,7 @@ export const refreshCarMarkers = ({commit, state}) => {
       return
     }
     const value = car.values[car.values.length - 1]
-    const position = [value.lat, value.lng]
+    const position = [value.lng, value.lat]
     return commit('addMarker', {
       marker: position,
       options: {
@@ -67,11 +67,13 @@ export const refreshCarMarkers = ({commit, state}) => {
 export const refreshTrails = ({commit, state}) => {
   commit('clearTrailMarkers')
   commit('clearTrails')
+  const trails = []
   forEach(state.cars, car => {
     if (car.visible) {
-      commit('addTrail', {car, trail: car.trail})
+      trails.push(car.trail)
     }
   })
+  commit('setTrails', trails)
 }
 
 export const toggleLayer = ({commit, state}, layerName) => {

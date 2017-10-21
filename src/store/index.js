@@ -23,7 +23,14 @@ const state = {
   trails: [],
   layerMarkers: new VectorLayer('markers', []),
   layerLocations: heatLayer,
-  layerTrails: new ODLineLayer('trails', []),
+  layerTrails: new ODLineLayer('trails', [], {
+    animation: true,
+    symbol: {lineColor: 'rgba(200, 230, 250, 1)', lineWidth: 2},
+    curveness: 0.4,
+    animationDuration: 6000,
+    trail: 100,
+    globalCompositeOperation: null
+  }),
   visibleLayers: []
 }
 

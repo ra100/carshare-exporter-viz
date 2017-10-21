@@ -26,7 +26,7 @@ export const addMarker = (state, {marker, options, tooltip}) => {
     content: tooltip
   })
   mInfo.addTo(mMarker)
-  mMarker.on('click', () => mInfo.isVisible() ? mInfo.hide() : mInfo.show())
+  mMarker.on('click', () => (mInfo.isVisible() ? mInfo.hide() : mInfo.show()))
   state.markers.push(mMarker)
   state.layerMarkers.addGeometry(mMarker)
 }
@@ -34,16 +34,17 @@ export const addMarker = (state, {marker, options, tooltip}) => {
 export const setTrails = (state, trails) => {
   const newTrails = []
   trails.forEach(trail => {
-    trail.forEach(points => newTrails.push({
-      coordinates: [points[0].reverse(), points[1].reverse()]
-    }))
+    trail.forEach(points =>
+      newTrails.push({
+        coordinates: [points[0].reverse(), points[1].reverse()]
+      })
+    )
   })
-  state.trails = newTrails
+  state.trails = Object.freeze(newTrails)
   state.layerTrails.setData(state.trails)
-  window.od = state.layerTrails
 }
 
-export const clearTrails = (state) => {
+export const clearTrails = state => {
   state.trails = []
 }
 
@@ -59,15 +60,15 @@ export const setLocations = (state, locations) => {
   state.locations = {...locations}
 }
 
-export const clearMarkers = (state) => {
+export const clearMarkers = state => {
   state.layerMarkers.clear()
 }
 
-export const clearLocationMarkers = (state) => {
+export const clearLocationMarkers = state => {
   state.layerLocations.clear()
 }
 
-export const clearTrailMarkers = (state) => {
+export const clearTrailMarkers = state => {
   state.layerTrails.setData([])
 }
 

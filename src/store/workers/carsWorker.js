@@ -20,20 +20,25 @@ const callApi = ({query, f = filter, start, end} = {}) => {
   })
 }
 
-const getTrail = (values) =>
-  values.reduce((acc, cur, index) => {
-    if (index === 0) {
-      return [[cur.lat, cur.lng]]
-    }
+const getTrail = (values) => {
+  const start = [[[values[0].lat, values[0].lng]]]
+  const out = values.reduce((acc, cur, index) => {
     const prev = acc[acc.length - 1]
     if (Number.parseInt(cur.available) !== 1 ||
-      (prev[0] === cur.lat &&
-      prev[1] === cur.lng)) {
+      (prev[0][0] === cur.lat &&
+      prev[0][1] === cur.lng)) {
       return acc
     }
-    acc.push([cur.lat, cur.lng])
+    prev.push([cur.lat, cur.lng])
+    acc.push([[cur.lat, cur.lng]])
     return acc
-  }, [])
+  }, start)
+  const last = out.pop()
+  if (last.length === 2) {
+    out.push(last)
+  }
+  return out
+}
 
 const processCars = (results) => {
   const cars = {}

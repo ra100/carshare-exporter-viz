@@ -1,7 +1,8 @@
-import L from 'leaflet'
+import * as maptalks from 'maptalks'
+const {Marker} = maptalks
 
 export const addGroupLayer = (state, layerName) => {
-  state[layerName].addTo(state.VL.maps.map)
+  state[layerName].addTo(state.map)
   state.visibleLayers.push(layerName)
 }
 
@@ -10,29 +11,40 @@ export const removeGroupLayer = (state, layerName) => {
   state.visibleLayers = state.visibleLayers.filter(name => name !== layerName)
 }
 
+export const setMap = (state, map) => {
+  state.map = map
+}
+
 export const addLocationsMarker = (state, {marker, radius}) => {
-  const lMarker = L.circleMarker(marker, {radius})
-  state.locationMarkers.push(lMarker)
-  state.layerLocations.addLayer(lMarker)
+  state.locationMarkers.push({marker, radius})
+  state.layerLocations.addPoint([[marker[1], marker[0], radius]])
 }
 
 export const addMarker = (state, {marker, options, tooltip}) => {
-  const lMarker = L.marker(marker, options)
-  state.markers.push(lMarker)
-  lMarker.bindPopup(tooltip)
-  state.layerMarkers.addLayer(lMarker)
-}
-
-export const addTrail = (state, {car, trail}) => {
-  const lTrail = L.polyline(trail, {color: 'rgba(9, 101, 186, 0.5)'})
-  state.trails.push({
-    carId: car.metric.id,
-    polyline: lTrail
+  const mMarker = new Marker(marker)
+  const mInfo = new maptalks.ui.InfoWindow({
+    content: tooltip
   })
-  state.layerTrails.addLayer(lTrail)
+  mInfo.addTo(mMarker)
+  mMarker.on('click', () => (mInfo.isVisible() ? mInfo.hide() : mInfo.show()))
+  state.markers.push(mMarker)
+  state.layerMarkers.addGeometry(mMarker)
 }
 
-export const clearTrails = (state) => {
+export const setTrails = (state, trails) => {
+  const newTrails = []
+  trails.forEach(trail => {
+    trail.forEach(points =>
+      newTrails.push({
+        coordinates: [points[0].reverse(), points[1].reverse()]
+      })
+    )
+  })
+  state.trails = Object.freeze(newTrails)
+  state.layerTrails.setData(state.trails)
+}
+
+export const clearTrails = state => {
   state.trails = []
 }
 
@@ -48,16 +60,16 @@ export const setLocations = (state, locations) => {
   state.locations = {...locations}
 }
 
-export const clearMarkers = (state) => {
-  state.layerMarkers.clearLayers()
+export const clearMarkers = state => {
+  state.layerMarkers.clear()
 }
 
-export const clearLocationMarkers = (state) => {
-  state.layerLocations.clearLayers()
+export const clearLocationMarkers = state => {
+  state.layerLocations.clear()
 }
 
-export const clearTrailMarkers = (state) => {
-  state.layerTrails.clearLayers()
+export const clearTrailMarkers = state => {
+  state.layerTrails.setData([])
 }
 
 export const showCar = (state, name) => {

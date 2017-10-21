@@ -22,9 +22,13 @@ export default {
 body {
   padding: 0;
   margin: 0;
+  background: #000;
 }
 html,
 body {
   height: 100vh;
+}
+.maptalks-msgContent {
+  color: #fff;
 }
 </style>

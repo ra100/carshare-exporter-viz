@@ -1,28 +1,31 @@
-<template lang="html" src="./Map.html">
+<template lang="html">
+  <div class="full">
+    <div id="map"/>
+  </div>
 </template>
 
 <script>
-import '../../node_modules/leaflet/dist/leaflet.css'
-import {fixIcon} from './MarkerIcon'
+import {Map, TileLayer} from 'maptalks'
 
 export default {
   data () {
     return {
       zoom: 13,
-      center: [50.083143, 14.423850],
-      marker: [50.083143, 14.423850],
-      minZoom: 2,
-      maxZoom: 18,
-      url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      title: 'vue-leaflet',
-      opacity: 1,
-      draggable: true,
-      attributionControl: false,
-      attribution: 'vue-leaflet'
+      center: [14.423850, 50.083143],
+      url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+      subdomains: ['a', 'b', 'c', 'd']
     }
   },
   mounted () {
-    fixIcon()
+    const map = new Map('map', {
+      center: this.center,
+      zoom: this.zoom,
+      baseLayer: new TileLayer('base', {
+        urlTemplate: this.url,
+        subdomains: this.subdomains
+      })
+    })
+    this.$store.commit('setMap', map)
     this.$store.dispatch('bindLayers')
     this.$store.dispatch('loadData')
   }

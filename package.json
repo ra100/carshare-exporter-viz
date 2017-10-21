@@ -17,9 +17,9 @@
     "lodash.foreach": "^4.5.0",
     "lodash.sortby": "^4.7.0",
     "lodash.values": "^4.3.0",
-    "maptalks": "^0.31.0",
+    "maptalks": "^0.32.2",
     "maptalks.heatmap": "^0.5.4",
-    "maptalks.odline": "^0.3.0",
+    "maptalks.odline": "^0.4.0",
     "vue": "^2.4.4",
     "vue-router": "^2.6.0",
     "vuex": "^2.4.1"

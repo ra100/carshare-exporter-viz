@@ -19,7 +19,7 @@
     "lodash.values": "^4.3.0",
     "maptalks": "^0.32.2",
     "maptalks.heatmap": "^0.5.4",
-    "maptalks.odline": "^0.4.0",
+    "maptalks.odline": "^0.4.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.0"

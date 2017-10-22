@@ -27,9 +27,7 @@ const state = {
     animation: true,
     symbol: {lineColor: 'rgba(200, 230, 250, 1)', lineWidth: 2},
     curveness: 0.4,
-    animationDuration: 6000,
-    trail: 100,
-    globalCompositeOperation: null
+    trail: 100
   }),
   visibleLayers: []
 }

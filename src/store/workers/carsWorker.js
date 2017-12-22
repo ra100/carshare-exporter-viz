@@ -21,20 +21,18 @@ const callApi = ({query, f = filter, start, end} = {}) => {
 }
 
 const getTrail = (values) => {
-  const start = [[[values[0].lat, values[0].lng]]]
+  const start = [[Number(values[0].lng), Number(values[0].lat)]]
   const out = values.reduce((acc, cur, index) => {
     const prev = acc[acc.length - 1]
-    if (prev[0][0] === cur.lat &&
-      prev[0][1] === cur.lng) {
+    if (Number(prev[0]) === Number(cur.lng) &&
+      Number(prev[1]) === Number(cur.lat)) {
       return acc
     }
-    prev.push([cur.lat, cur.lng])
-    acc.push([[cur.lat, cur.lng]])
+    acc.push([Number(cur.lng), Number(cur.lat)])
     return acc
   }, start)
-  const last = out.pop()
-  if (last.length === 2) {
-    out.push(last)
+  if (out.length === 1) {
+    out.push(out[0])
   }
   return out
 }

@@ -24,9 +24,8 @@ const getTrail = (values) => {
   const start = [[[values[0].lat, values[0].lng]]]
   const out = values.reduce((acc, cur, index) => {
     const prev = acc[acc.length - 1]
-    if (Number.parseInt(cur.available) !== 1 ||
-      (prev[0][0] === cur.lat &&
-      prev[0][1] === cur.lng)) {
+    if (prev[0][0] === cur.lat &&
+      prev[0][1] === cur.lng) {
       return acc
     }
     prev.push([cur.lat, cur.lng])
@@ -43,44 +42,38 @@ const getTrail = (values) => {
 const processCars = (results) => {
   const cars = {}
   const locations = {}
-  const [latResult, lngResult, availableResult] = results
+  const [latResult, lngResult] = results
   const tmpCars = {}
   latResult.data.data.result.forEach(car => {
     tmpCars[car.metric.id] = {
       lat: car.values,
       lng: [],
-      available: [],
       metric: car.metric
     }
   })
   lngResult.data.data.result.forEach(car => {
     tmpCars[car.metric.id].lng = car.values
   })
-  availableResult.data.data.result.forEach(car => {
-    tmpCars[car.metric.id].available = car.values
-  })
   Object.keys(tmpCars).forEach((carId) => {
     const car = tmpCars[carId]
     const latValues = car.lat
     const lngValues = car.lng
-    const availableValues = car.available
     const newCar = {metric: car.metric, values: [], trail: [], visible: true}
     newCar.values = latValues.reduce((acc, oneLat, index) => {
       const curr = {
         lat: oneLat[1],
-        lng: lngValues[index][1],
-        available: availableValues[index][1]
+        lng: lngValues[index][1]
       }
       if (index === 0) {
         return [curr]
       }
       const prev = acc[acc.length - 1]
-      if (prev.lat === curr.lat && prev.lng === curr.lng && prev.available === curr.available) {
+      if (prev.lat === curr.lat && prev.lng === curr.lng) {
         return acc
       }
       const key = `${oneLat[1]},${lngValues[index][1]}`
       ;(locations[key] = (!!locations[key] && locations[key]) || 0)
-      ;locations[key] += Number(availableValues[index][1])
+      locations[key] += 1
       acc.push(curr)
       return acc
     }, [])
@@ -102,8 +95,7 @@ const fetchCars = async ({from, to} = {}) => {
   try {
     const results = await Promise.all([
       callApi({query: metricsKeys.lat, start, end}),
-      callApi({query: metricsKeys.lng, start, end}),
-      callApi({query: metricsKeys.available, start, end})
+      callApi({query: metricsKeys.lng, start, end})
     ])
     return Promise.resolve(processCars(results))
   } catch (error) {

@@ -21,7 +21,22 @@
           <at-dropdown-menu slot="menu">
             <at-dropdown-item v-for="car in carsArray" :key="car.metric.id" :name="car.metric.name">
               <i v-if="car.visible" class="icon icon-eye"></i>
-              <i v-else class="icon icon-eye-off"></i> {{car.metric.name}}
+              <i v-else class="icon icon-eye-off"></i> {{car.metric.type}} - {{car.metric.license}}
+            </at-dropdown-item>
+            <at-dropdown-item name="hideAll">
+              Hide All
+            </at-dropdown-item>
+            <at-dropdown-item name="showAll">
+              Show All
+            </at-dropdown-item>
+          </at-dropdown-menu>
+      </at-dropdown>
+      <at-dropdown @on-dropdown-command="handleType" trigger="click">
+        <at-button>Types <i class="icon icon-chevron-down"></i></at-button>
+          <at-dropdown-menu slot="menu">
+            <at-dropdown-item v-for="type in carTypes" :key="type.name" :name="type.name">
+              <i v-if="type.visible" class="icon icon-eye"></i>
+              <i v-else class="icon icon-eye-off"></i> {{type}}
             </at-dropdown-item>
             <at-dropdown-item name="hideAll">
               Hide All
@@ -38,11 +53,20 @@
 <script>
 import values from 'lodash.values'
 import {mapActions, mapState} from 'vuex'
+
+const sortByType = (a, b) => {
+  if (a.metric.type === b.metric.type) {
+    return a.metric.license.localeCompare(b.metric.license)
+  }
+  return a.metric.type.localeCompare(b.metric.type)
+}
+
 export default {
   name: 'toolbar',
   data: () => {
     return {
-      carsArray: []
+      carsArray: [],
+      carTypes: []
     }
   },
   computed: {
@@ -53,7 +77,7 @@ export default {
   },
   watch: {
     cars: function (cars) {
-      this.carsArray = values(cars)
+      this.carsArray = values(cars).sort(sortByType)
     }
   },
   methods: {
@@ -72,6 +96,9 @@ export default {
         return this[name]()
       }
       return this.toggleCar(name)
+    },
+    handleType (type) {
+      return ''
     }
   }
 }
@@ -79,6 +106,10 @@ export default {
 
 <style @scoped>
 .at-dropdown-menu {
-  max-height: 100%;
+  max-height: calc(100vh - 50px);
+  overflow-y: auto;
+}
+.row {
+  margin: 0;
 }
 </style>

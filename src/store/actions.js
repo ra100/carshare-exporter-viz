@@ -56,9 +56,9 @@ export const refreshCarMarkers = ({commit, state}) => {
     return commit('addMarker', {
       marker: position,
       options: {
-        opacity: 1
+        opacity: (car.available && 1) || 0.5
       },
-      tooltip: `<div>${car.metric.name}`
+      tooltip: `<div>${car.metric.type} - ${car.metric.license}</div>`
     })
   })
 }

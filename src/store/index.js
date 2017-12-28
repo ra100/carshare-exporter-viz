@@ -24,8 +24,8 @@ const state = {
   layerMarkers: new VectorLayer('markers', []),
   layerLocations: heatLayer,
   layerTrails: new E3Layer('trails', {}, {
-    hideOnZooming: true,
-    hideOnMoving: true,
+    hideOnZooming: false,
+    hideOnMoving: false,
     hideOnRotate: true
   }),
   visibleLayers: []

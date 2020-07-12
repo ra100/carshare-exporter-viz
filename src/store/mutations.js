@@ -7,16 +7,16 @@ const seriesConfig = {
   data: [],
   lineStyle: {
     normal: {
-      width: 0
-    }
+      width: 0,
+    },
   },
   effect: {
     constantSpeed: 40,
     show: true,
     trailLength: 0.8,
-    symbolSize: 1.5
+    symbolSize: 1.5,
   },
-  zlevel: 1
+  zlevel: 1,
 }
 
 export const addGroupLayer = (state, layerName) => {
@@ -26,7 +26,7 @@ export const addGroupLayer = (state, layerName) => {
 
 export const removeGroupLayer = (state, layerName) => {
   state[layerName].remove()
-  state.visibleLayers = state.visibleLayers.filter(name => name !== layerName)
+  state.visibleLayers = state.visibleLayers.filter((name) => name !== layerName)
 }
 
 export const setMap = (state, map) => {
@@ -41,7 +41,7 @@ export const addLocationsMarker = (state, {marker, radius}) => {
 export const addMarker = (state, {marker, options, tooltip}) => {
   const mMarker = new Marker(marker)
   const mInfo = new maptalks.ui.InfoWindow({
-    content: tooltip
+    content: tooltip,
   })
   mInfo.addTo(mMarker)
   mMarker.on('click', () => (mInfo.isVisible() ? mInfo.hide() : mInfo.show()))
@@ -50,15 +50,15 @@ export const addMarker = (state, {marker, options, tooltip}) => {
 }
 
 export const setTrails = (state, trails) => {
-  const series = trails.map(trail => ({
+  const series = trails.map((trail) => ({
     ...seriesConfig,
-    data: [{coords: trail}]
+    data: [{coords: trail}],
   }))
   state.trails = Object.freeze(series)
   state.layerTrails.setEChartsOption({series})
 }
 
-export const clearTrails = state => {
+export const clearTrails = (state) => {
   state.trails = []
 }
 
@@ -74,15 +74,15 @@ export const setLocations = (state, locations) => {
   state.locations = {...locations}
 }
 
-export const clearMarkers = state => {
+export const clearMarkers = (state) => {
   state.layerMarkers.clear()
 }
 
-export const clearLocationMarkers = state => {
+export const clearLocationMarkers = (state) => {
   state.layerLocations.clear()
 }
 
-export const clearTrailMarkers = state => {
+export const clearTrailMarkers = (state) => {
   state.layerTrails.setEChartsOption({})
 }
 

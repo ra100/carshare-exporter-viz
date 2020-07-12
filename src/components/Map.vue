@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="full">
-    <div id="map"/>
+    <div id="map" />
   </div>
 </template>
 
@@ -8,27 +8,27 @@
 import {Map, TileLayer} from 'maptalks'
 
 export default {
-  data () {
+  data() {
     return {
       zoom: 13,
-      center: [14.423850, 50.083143],
+      center: [14.42385, 50.083143],
       url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-      subdomains: ['a', 'b', 'c', 'd']
+      subdomains: ['a', 'b', 'c', 'd'],
     }
   },
-  mounted () {
+  mounted() {
     const map = new Map('map', {
       center: this.center,
       zoom: this.zoom,
       baseLayer: new TileLayer('base', {
         urlTemplate: this.url,
-        subdomains: this.subdomains
-      })
+        subdomains: this.subdomains,
+      }),
     })
     this.$store.commit('setMap', map)
     this.$store.dispatch('bindLayers')
     this.$store.dispatch('loadData')
-  }
+  },
 }
 </script>
 

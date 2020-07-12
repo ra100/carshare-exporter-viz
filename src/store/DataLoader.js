@@ -14,5 +14,5 @@ export const getData = async ({from, to} = {}) =>
   })
 
 export default {
-  getData
+  getData,
 }

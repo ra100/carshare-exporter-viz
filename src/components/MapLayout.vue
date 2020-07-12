@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="toolbar-container">
-      <toolbar/>
+      <toolbar />
     </div>
     <div class="map-container">
-      <cs-map/>
+      <cs-map />
     </div>
   </div>
 </template>
@@ -14,11 +14,11 @@ import CsMap from './Map'
 import Toolbar from './Toolbar'
 
 export default {
-  name: 'map-layout',
+  name: 'MapLayout',
   components: {
     CsMap,
-    Toolbar
-  }
+    Toolbar,
+  },
 }
 </script>
 

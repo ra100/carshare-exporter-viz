@@ -1,6 +1,8 @@
 {
-  "no-bracket-spacing": false,
-  "single-quote": true,
-  "print-width": 120,
-  "no-semi": true
+  "bracketSpacing": false,
+  "singleQuote": true,
+  "printWidth": 120,
+  "semi": false,
+  "arrowParens": "always",
+  "trailingComma": "es5"
 }

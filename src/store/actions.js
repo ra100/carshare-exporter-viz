@@ -13,12 +13,12 @@ export const bindLayers = ({commit}) => {
 export const loadData = ({commit, dispatch}) => {
   getData().then(({cars, locations}) => {
     const frozenCars = {}
-    Object.keys(cars).forEach(key => {
+    Object.keys(cars).forEach((key) => {
       frozenCars[key] = {
         ...cars[key],
         metrics: Object.freeze(cars[key].metrics),
         trail: Object.freeze(cars[key].trail),
-        values: Object.freeze(cars[key].values)
+        values: Object.freeze(cars[key].values),
       }
     })
     commit('setCars', cars)
@@ -32,10 +32,10 @@ export const loadData = ({commit, dispatch}) => {
 export const refreshLocationMarkers = ({commit, state}) => {
   commit('clearLocationMarkers')
   locationWorker.onmessage = ({data: {newLocations, max}}) => {
-    newLocations.forEach(location => {
+    newLocations.forEach((location) => {
       commit('addLocationsMarker', {
         marker: [location.lat, location.lng],
-        radius: Math.max(location.count > 0 ? (location.count / max) * 24 : 6, 6)
+        radius: Math.max(location.count > 0 ? (location.count / max) * 24 : 6, 6),
       })
     })
   }
@@ -47,7 +47,7 @@ export const refreshLocationMarkers = ({commit, state}) => {
 
 export const refreshCarMarkers = ({commit, state}) => {
   commit('clearMarkers')
-  forEach(state.cars, car => {
+  forEach(state.cars, (car) => {
     if (!car.visible) {
       return
     }
@@ -56,9 +56,9 @@ export const refreshCarMarkers = ({commit, state}) => {
     return commit('addMarker', {
       marker: position,
       options: {
-        opacity: (car.available && 1) || 0.5
+        opacity: (car.available && 1) || 0.5,
       },
-      tooltip: `<div>${car.metric.type} - ${car.metric.license}</div>`
+      tooltip: `<div>${car.metric.type} - ${car.metric.license}</div>`,
     })
   })
 }
@@ -67,7 +67,7 @@ export const refreshTrails = ({commit, state}) => {
   commit('clearTrailMarkers')
   commit('clearTrails')
   const trails = []
-  forEach(state.cars, car => {
+  forEach(state.cars, (car) => {
     if (car.visible) {
       trails.push(car.trail)
     }
@@ -93,7 +93,7 @@ export const toggleCar = ({commit, dispatch, state}, name) => {
 }
 
 export const hideAll = ({commit, dispatch, state}) => {
-  forEach(state.cars, car => {
+  forEach(state.cars, (car) => {
     commit('hideCar', car.metric.name)
   })
   dispatch('refreshCarMarkers')
@@ -101,7 +101,7 @@ export const hideAll = ({commit, dispatch, state}) => {
 }
 
 export const showAll = ({commit, dispatch, state}) => {
-  forEach(state.cars, car => {
+  forEach(state.cars, (car) => {
     commit('showCar', car.metric.name)
   })
   dispatch('refreshCarMarkers')

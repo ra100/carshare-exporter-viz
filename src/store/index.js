@@ -11,7 +11,7 @@ Vue.use(Vuex)
 
 const heatLayer = new HeatLayer('heat', [])
 heatLayer.config({
-  gradient: {0: 'rgba(103, 200, 116, 0.5)', 1: 'rgb(24, 159, 59)'}
+  gradient: {0: 'rgba(103, 200, 116, 0.5)', 1: 'rgb(24, 159, 59)'},
 })
 
 const state = {
@@ -23,17 +23,21 @@ const state = {
   trails: [],
   layerMarkers: new VectorLayer('markers', []),
   layerLocations: heatLayer,
-  layerTrails: new E3Layer('trails', {}, {
-    hideOnZooming: false,
-    hideOnMoving: false,
-    hideOnRotate: true
-  }),
-  visibleLayers: []
+  layerTrails: new E3Layer(
+    'trails',
+    {},
+    {
+      hideOnZooming: false,
+      hideOnMoving: false,
+      hideOnRotate: true,
+    }
+  ),
+  visibleLayers: [],
 }
 
 export default new Vuex.Store({
   state,
   mutations,
   getters,
-  actions
+  actions,
 })

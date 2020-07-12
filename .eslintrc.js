@@ -2,8 +2,8 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   parserOptions: {
+    parser: 'babel-eslint',
     sourceType: 'module',
     ecmaFeatures: {
       spread: true,
@@ -15,16 +15,16 @@ module.exports = {
       modules: true,
       arrowFunctions: true,
       forOf: true,
-      classes: true
-    }
+      classes: true,
+    },
   },
   env: {
-    browser: true
+    browser: true,
   },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
-  extends: 'standard',
+  extends: ['plugin:vue/recommended', 'standard', 'prettier'],
   // required to lint *.vue files
-  plugins: ['html'],
+  plugins: ['vue'],
   // add your custom rules here
   rules: {
     // allow paren-less arrow functions
@@ -33,8 +33,8 @@ module.exports = {
     'generator-star-spacing': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'comma-dangle': ['error', 'never'],
+    'comma-dangle': ['error', 'only-multiline'],
     semi: ['error', 'never'],
-    'object-curly-spacing': ['error', 'never']
-  }
-}
+    'object-curly-spacing': ['error', 'never'],
+  },
+};

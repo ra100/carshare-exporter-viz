@@ -1,6 +1,6 @@
 import axios from 'axios'
 import local from '../../../config/local'
-const timeframe = (30 * 24 * 60 * 60) // 30 days
+const timeframe = 30 * 24 * 60 * 60 // 30 days
 const step = 300
 const MINIMAL_DISTANCE = 0.001
 
@@ -8,13 +8,13 @@ const client = axios.create(local.axiosConfig)
 const {metricsKeys, filter} = local
 
 const getDistance = (from, to) => {
-  const x = (from.lat - to.lat)
-  const y = (from.lng - to.lng)
+  const x = from.lat - to.lat
+  const y = from.lng - to.lng
   const average = {
     lat: Number(from.lat) + x / 2,
-    lng: Number(from.lng) + y / 2
+    lng: Number(from.lng) + y / 2,
   }
-  const distance = Math.sqrt((x * x) + (y * y))
+  const distance = Math.sqrt(x * x + y * y)
   return {distance, average}
 }
 
@@ -27,8 +27,8 @@ const callApi = ({query, f = filter, start, end} = {}) => {
       start,
       end,
       step,
-      _: Date.now()
-    }
+      _: Date.now(),
+    },
   })
 }
 
@@ -55,17 +55,17 @@ const processCars = (results) => {
   const [latResult, lngResult] = results
   const tmpCars = {}
   let lastTimestamp = 0
-  latResult.data.data.result.forEach(car => {
+  latResult.data.data.result.forEach((car) => {
     tmpCars[car.metric.id] = {
       lat: car.values,
       lng: [],
-      metric: car.metric
+      metric: car.metric,
     }
     if (car.values[car.values.length - 1][0] > lastTimestamp) {
       lastTimestamp = car.values[car.values.length - 1][0]
     }
   })
-  lngResult.data.data.result.forEach(car => {
+  lngResult.data.data.result.forEach((car) => {
     tmpCars[car.metric.id].lng = car.values
   })
   Object.keys(tmpCars).forEach((carId) => {
@@ -78,7 +78,7 @@ const processCars = (results) => {
         lat: oneLat[1], // value
         lng: lngValues[index][1],
         from: oneLat[0], // timestamp
-        to: oneLat[0]
+        to: oneLat[0],
       }
       if (index === 0) {
         return [curr]
@@ -91,19 +91,19 @@ const processCars = (results) => {
         return acc
       }
       const key = `${oneLat[1]},${lngValues[index][1]}`
-      ;(locations[key] = (!!locations[key] && locations[key]) || 0)
+      locations[key] = (!!locations[key] && locations[key]) || 0
       locations[key] += 1
       acc.push(curr)
       return acc
     }, [])
-    const available = (newCar.values[newCar.values.length - 1].to === lastTimestamp)
+    const available = newCar.values[newCar.values.length - 1].to === lastTimestamp
     newCar.trail = getTrail(newCar.values)
     cars[car.metric.name] = {
       available,
       trail: newCar.trail,
       visible: newCar.visible,
       metric: newCar.metric,
-      values: newCar.values
+      values: newCar.values,
     }
   })
   return {cars, locations}
@@ -116,7 +116,7 @@ const fetchCars = async ({from, to} = {}) => {
   try {
     const results = await Promise.all([
       callApi({query: metricsKeys.lat, start, end}),
-      callApi({query: metricsKeys.lng, start, end})
+      callApi({query: metricsKeys.lng, start, end}),
     ])
     return Promise.resolve(processCars(results))
   } catch (error) {
@@ -125,10 +125,11 @@ const fetchCars = async ({from, to} = {}) => {
 }
 
 self.addEventListener('message', (event) => {
-  const {data: {action}} = event
+  const {
+    data: {action},
+  } = event
   if (!action || action !== 'fetchCars') {
     return
   }
-  fetchCars(event.data)
-    .then(self.postMessage, self.postMessage)
+  fetchCars(event.data).then(self.postMessage, self.postMessage)
 })

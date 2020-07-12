@@ -25,12 +25,12 @@ var compiler = webpack(webpackConfig)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
-  quiet: true
+  quiet: true,
 })
 
 var hotMiddleware = require('webpack-hot-middleware')(compiler, {
   log: false,
-  heartbeat: 2000
+  heartbeat: 2000,
 })
 // force page reload when html-webpack-plugin template changes
 compiler.plugin('compilation', function (compilation) {
@@ -66,7 +66,7 @@ app.use(staticPath, express.static('./static'))
 var uri = 'http://localhost:' + port
 
 var _resolve
-var readyPromise = new Promise(resolve => {
+var readyPromise = new Promise((resolve) => {
   _resolve = resolve
 })
 
@@ -86,5 +86,5 @@ module.exports = {
   ready: readyPromise,
   close: () => {
     server.close()
-  }
+  },
 }

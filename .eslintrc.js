@@ -36,5 +36,15 @@ module.exports = {
     'comma-dangle': ['error', 'only-multiline'],
     semi: ['error', 'never'],
     'object-curly-spacing': ['error', 'never'],
+    'vue/max-attributes-per-line': [
+      'warn',
+      {
+        singleline: 5,
+        multiline: {
+          max: 1,
+          allowFirstLine: false,
+        },
+      },
+    ],
   },
-};
+}

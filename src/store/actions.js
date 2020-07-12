@@ -11,22 +11,24 @@ export const bindLayers = ({commit}) => {
 }
 
 export const loadData = ({commit, dispatch}) => {
-  getData().then(({cars, locations}) => {
-    const frozenCars = {}
-    Object.keys(cars).forEach((key) => {
-      frozenCars[key] = {
-        ...cars[key],
-        metrics: Object.freeze(cars[key].metrics),
-        trail: Object.freeze(cars[key].trail),
-        values: Object.freeze(cars[key].values),
-      }
+  getData()
+    .then(({cars, locations}) => {
+      const frozenCars = {}
+      Object.keys(cars).forEach((key) => {
+        frozenCars[key] = {
+          ...cars[key],
+          metrics: Object.freeze(cars[key].metrics),
+          trail: Object.freeze(cars[key].trail),
+          values: Object.freeze(cars[key].values),
+        }
+      })
+      commit('setCars', cars)
+      commit('setLocations', locations)
+      dispatch('refreshLocationMarkers')
+      dispatch('refreshTrails')
+      dispatch('refreshCarMarkers')
     })
-    commit('setCars', cars)
-    commit('setLocations', locations)
-    dispatch('refreshLocationMarkers')
-    dispatch('refreshTrails')
-    dispatch('refreshCarMarkers')
-  })
+    .catch(console.error)
 }
 
 export const refreshLocationMarkers = ({commit, state}) => {
@@ -88,6 +90,17 @@ export const toggleCar = ({commit, dispatch, state}, name) => {
   } else {
     commit('showCar', name)
   }
+  dispatch('refreshCarMarkers')
+  dispatch('refreshTrails')
+}
+
+export const toggleType = ({commit, dispatch, state}, {name, visible}) => {
+  Object.entries(state.cars).forEach(([key, value]) => {
+    if (value.metric.type === name) {
+      commit(visible ? 'showCar' : 'hideCar', key)
+    }
+  })
+
   dispatch('refreshCarMarkers')
   dispatch('refreshTrails')
 }

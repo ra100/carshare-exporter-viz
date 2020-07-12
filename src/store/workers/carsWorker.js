@@ -131,5 +131,5 @@ self.addEventListener('message', (event) => {
   if (!action || action !== 'fetchCars') {
     return
   }
-  fetchCars(event.data).then(self.postMessage, self.postMessage)
+  fetchCars(event.data).then(self.postMessage).catch(self.postMessage)
 })

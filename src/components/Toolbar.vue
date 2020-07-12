@@ -39,7 +39,7 @@
         <at-dropdown-menu slot="menu">
           <at-dropdown-item v-for="type in carTypes" :key="type.name" :name="type.name">
             <i v-if="type.visible" class="icon icon-eye" />
-            <i v-else class="icon icon-eye-off" /> {{ type }}
+            <i v-else class="icon icon-eye-off" /> {{ type.name }}
           </at-dropdown-item>
           <at-dropdown-item name="hideAll">
             Hide All
@@ -78,10 +78,19 @@ export default {
   watch: {
     cars: function (cars) {
       this.carsArray = values(cars).sort(sortByType)
+
+      const carTypesSet = Object.entries(cars).reduce((acc, [key, curr]) => {
+        if (curr?.metric?.type) {
+          acc.add(curr.metric.type)
+        }
+        return acc
+      }, new Set())
+
+      this.carTypes = Array.from(carTypesSet).map((type) => ({visible: true, name: type}))
     },
   },
   methods: {
-    ...mapActions(['loadData', 'toggleLayer', 'toggleCar', 'hideAll', 'showAll']),
+    ...mapActions(['loadData', 'toggleLayer', 'toggleCar', 'toggleType', 'hideAll', 'showAll']),
     handleLayer(name) {
       this.toggleLayer(name)
     },
@@ -91,8 +100,24 @@ export default {
       }
       return this.toggleCar(name)
     },
-    handleType(type) {
-      return ''
+    handleType(typeName) {
+      if (typeName === 'hideAll') {
+        this.carTypes = this.carTypes.map((type) => ({...type, visible: false}))
+        return this.hideAll()
+      }
+      if (typeName === 'showAll') {
+        this.carTypes = this.carTypes.map((type) => ({...type, visible: true}))
+        return this.showAll()
+      }
+      this.carTypes = this.carTypes.map((type) => {
+        if (type.name === typeName) {
+          return {...type, visible: !type.visible}
+        }
+        return type
+      })
+      const currentState = this.carTypes.find(({name}) => name === typeName)
+      console.log(currentState.visible)
+      return this.toggleType({name: typeName, visible: currentState.visible})
     },
   },
 }
